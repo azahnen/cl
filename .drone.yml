@@ -1,3 +1,4 @@
+
 pipeline:
 
   env:
@@ -9,21 +10,25 @@ pipeline:
     image: node:12-alpine
     commands:
       - export HOME=$${DRONE_WORKSPACE}
-      - apk --no-cache add git
+      - apk --no-cache add git libc6-compat
+      - wget -O - https://github.com/cli/cli/releases/download/v1.2.0/gh_1.2.0_linux_amd64.tar.gz | tar xzvf -
+      - chmod +x gh_1.2.0_linux_amd64/bin/gh 
       - npx github-release-notes@0.17.1 release --token=$GITHUB_TOKEN
       - npx github-release-notes@0.17.1 changelog --override --token=$GITHUB_TOKEN
-    secrets: [ github_token ]
-    when:
-      event: [tag]
-
-  changelog:
-    image: alpine/git
-    commands:
       - git config user.name $DRONE_COMMIT_AUTHOR
       - git config user.email $DRONE_COMMIT_AUTHOR_EMAIL
       - git checkout -B changelog-$DRONE_TAG
       - git add CHANGELOG.md
       - git commit -m "add changelog for $DRONE_TAG"
+      - ./gh_1.2.0_linux_amd64/bin/gh auth login -h github.com
+      - ./gh_1.2.0_linux_amd64/bin/gh pr create --base master --fill --head changelog-$DRONE_TAG --reviewer $DRONE_COMMIT_AUTHOR
+    secrets: [ github_token ]
+#    when:
+#      event: [tag]
+
+  changelog:
+    image: alpine/git
+    commands:
       - git push -u origin changelog-$DRONE_TAG
     secrets: [ github_token ]
     when:
