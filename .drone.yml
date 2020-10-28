@@ -1,5 +1,10 @@
 pipeline:
 
+  env:
+    image: node:12-alpine
+    commands:
+      - export
+
   release:
     image: node:12-alpine
     commands:
