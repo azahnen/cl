@@ -19,6 +19,8 @@ pipeline:
   changelog:
     image: alpine/git
     commands:
+      - git config user.name $DRONE_COMMIT_AUTHOR
+      - git config user.email $DRONE_COMMIT_AUTHOR_EMAIL
       - git checkout -B changelog-$DRONE_TAG
       - git add CHANGELOG.md
       - git commit -m "add changelog for $DRONE_TAG"
