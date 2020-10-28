@@ -3,6 +3,8 @@ pipeline:
   release:
     image: node:12-alpine
     commands:
+      - export HOME=$${DRONE_WORKSPACE}
+      - apk --no-cache add git
       - npx github-release-notes@0.17.1 release --token=$GITHUB_TOKEN
       - npx github-release-notes@0.17.1 changelog --override --token=$GITHUB_TOKEN
     secrets: [ github_token ]
