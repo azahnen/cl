@@ -25,7 +25,7 @@ pipeline:
       - git checkout -B changelog-$DRONE_TAG
       - git add CHANGELOG.md
       - git commit -m "add changelog for $DRONE_TAG"
-      - git push --quiet -u https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$DRONE_REPO_OWNER/$DRONE_REPO_NAME.git changelog-$DRONE_TAG
+      - git push -u https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$DRONE_REPO_OWNER/$DRONE_REPO_NAME.git changelog-$DRONE_TAG > /dev/null 2>&1
       - GITHUB_TOKEN=$GITHUB_TOKEN ./gh_1.2.0_linux_amd64/bin/gh pr create --base master --head changelog-$DRONE_TAG --reviewer $DRONE_COMMIT_AUTHOR --title " add changelog for $DRONE_TAG" --body ""
     secrets: [ github_token, github_user ]
     when:
